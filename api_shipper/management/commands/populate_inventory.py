@@ -10,14 +10,14 @@ class Command(BaseCommand):
         # Create Truck
         truck_data = {
             'model_name': 'Volvo FH16',
-            'length': 10.00,
-            'breadth': 6.00,
+            'length': 11.00,
+            'breadth': 7.00,
             'height': 6.00,
             'tare_weight': 5000.00,
-            'gvwr': 15000.00,
-            'axle_weight_ratings': [5000.00, 5000.00, 5000.00],
-            'axle_group_weight_ratings': [10000.00, 10000.00],
-            'wheel_load_capacity': 500.00,
+            'gvwr': 18000.00,
+            'axle_weight_ratings': [6000.00, 6000.00, 6000.00],
+            'axle_group_weight_ratings': [12000.00, 12000.00],
+            'wheel_load_capacity': 1000.00,
             'destination': 'New York'
         }
         
@@ -31,13 +31,16 @@ class Command(BaseCommand):
         packages_data = [
             {'name': 'Electronics Set', 'length': 3.00, 'breadth': 4.00, 'height': 2.00, 'weight': 500.00, 'destination': 'New York', 'deliver_date': date.today() + timedelta(days=1), 'stock': 4},
             {'name': 'Books Collection', 'length': 4.50, 'breadth': 2.50, 'height': 1.30, 'weight': 300.00, 'destination': 'New York', 'deliver_date': date.today() + timedelta(days=2), 'stock': 4},
-            {'name': 'Furniture Set', 'length': 2.00, 'breadth': 2.00, 'height': 2.00, 'weight': 800.00, 'destination': 'New York', 'deliver_date': date.today() + timedelta(days=3), 'stock': 6}, #4
-            {'name': 'Clothing Box', 'length': 1.50, 'breadth': 3.50, 'height': 2.50, 'weight': 600.00, 'destination': 'New York', 'deliver_date': date.today() + timedelta(days=4), 'stock': 4},
+            {'name': 'Furniture Set', 'length': 2.00, 'breadth': 2.00, 'height': 2.00, 'weight': 400.00, 'destination': 'New York', 'deliver_date': date.today() + timedelta(days=3), 'stock': 6}, #4
+            {'name': 'Clothing Box', 'length': 1.50, 'breadth': 3.50, 'height': 2.50, 'weight': 300.00, 'destination': 'New York', 'deliver_date': date.today() + timedelta(days=4), 'stock': 4},
             {'name': 'Kitchen Appliances', 'length': 3.35, 'breadth': 4.15, 'height': 2.05, 'weight': 350.00, 'destination': 'New York', 'deliver_date': date.today() + timedelta(days=5), 'stock': 6}, #4
-            {'name': 'Fitness Equipment', 'length': 4.00, 'breadth': 2.00, 'height': 1.00, 'weight': 500.00, 'destination': 'New York', 'deliver_date': date.today() + timedelta(days=6), 'stock': 4},
+            {'name': 'Fitness Equipment', 'length': 4.00, 'breadth': 2.00, 'height': 1.00, 'weight': 200.00, 'destination': 'New York', 'deliver_date': date.today() + timedelta(days=6), 'stock': 4},
             {'name': 'Office Supplies', 'length': 2.00, 'breadth': 2.00, 'height': 2.00, 'weight': 300.00, 'destination': 'New York', 'deliver_date': date.today() + timedelta(days=7), 'stock': 4},
-            {'name': 'Home Decor', 'length': 1.00, 'breadth': 3.00, 'height': 2.00, 'weight': 800.00, 'destination': 'New York', 'deliver_date': date.today() + timedelta(days=8), 'stock': 4},
+            {'name': 'Home Decor', 'length': 1.00, 'breadth': 3.00, 'height': 2.00, 'weight': 600.00, 'destination': 'New York', 'deliver_date': date.today() + timedelta(days=8), 'stock': 4},
             {'name': 'Sports Gear', 'length': 2.50, 'breadth': 2.50, 'height': 2.50, 'weight': 600.00, 'destination': 'NewYork', 'deliver_date': date.today() + timedelta(days=9), 'stock': 4},
+            {'name': 'Sports Car', 'length': 2.00, 'breadth': 3.00, 'height': 1.00, 'weight': 100.00, 'destination': 'NewYork', 'deliver_date': date.today() + timedelta(days=9), 'stock': 4},
+            {'name': 'Fresh Vegetables', 'length': 1.00, 'breadth': 1.00, 'height': 1.00, 'weight': 200.00, 'destination': 'NewYork', 'deliver_date': date.today() + timedelta(days=9), 'stock': 10},
+            {'name': 'Fresh Fruits', 'length': 1.00, 'breadth': 2.00, 'height': 1.00, 'weight': 50.00, 'destination': 'NewYork', 'deliver_date': date.today() + timedelta(days=9), 'stock': 2},
             {'name': 'Medical Supplies', 'length': 3.00, 'breadth': 4.00, 'height': 2.00, 'weight': 350.00, 'destination': 'Jacksonville', 'deliver_date': date.today() + timedelta(days=10), 'stock': 4},
             {'name': 'Toys and Games', 'length': 4.00, 'breadth': 2.00, 'height': 1.00, 'weight': 500.00, 'destination': 'Jacksonville', 'deliver_date': date.today() + timedelta(days=11), 'stock': 6},
             {'name': 'Camping Gear', 'length': 1.00, 'breadth': 4.00, 'height': 1.00, 'weight': 300.00, 'destination': 'San Francisco', 'deliver_date': date.today() + timedelta(days=12), 'stock': 5},
