@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('api_shipper', '0008_approval'),
+        ("api_shipper", "0008_approval"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='approval',
-            name='link',
-            field=models.URLField(default='http://localhost:8081/visualization/8ebb569e-06c3-4156-a9e6-f60ca88bbf3a/'),
+            model_name="approval",
+            name="link",
+            field=models.URLField(default="http://localhost:8081/visualization/8ebb569e-06c3-4156-a9e6-f60ca88bbf3a/"),
         ),
     ]
