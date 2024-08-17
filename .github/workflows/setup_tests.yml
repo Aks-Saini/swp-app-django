@@ -1,4 +1,4 @@
-name: Code Quality and Tests
+name: Build Images & Tests
 
 on:
   pull_request:

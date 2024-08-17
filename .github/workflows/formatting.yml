@@ -1,4 +1,4 @@
-name: Code Quality and Tests
+name: Code Formatting
 
 on:
   pull_request:
