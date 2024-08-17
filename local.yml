@@ -105,5 +105,15 @@ services:
     ports:
       - "8081:8081"
 
+  pytest:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    command: pytest
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
 volumes:
   postgres_data:
