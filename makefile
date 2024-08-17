@@ -18,3 +18,6 @@ pi:
 
 ri:
 	docker-compose -f local.yml run web python manage.py reset_inventory
+
+t:
+	docker-compose -f local.yml exec web pytest
