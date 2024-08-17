@@ -1,4 +1,4 @@
-name: Code Quality Checks
+name: Code Quality and Tests
 
 on:
   pull_request:
@@ -16,7 +16,7 @@ jobs:
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Run basic pre-commit hooks
-        run: pre-commit run --all-files --hook-stage manual --hooks trailing-whitespace,end-of-file-fixer,check-yaml,check-added-large-files,check-merge-conflict
+        run: pre-commit run --all-files --hook trailing-whitespace --hook end-of-file-fixer --hook check-yaml --hook check-added-large-files --hook check-merge-conflict
 
   formatting:
     runs-on: ubuntu-latest
@@ -29,7 +29,7 @@ jobs:
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Run formatting tools
-        run: pre-commit run --all-files --hook-stage manual --hooks black,isort
+        run: pre-commit run --all-files --hook black --hook isort
 
   linting:
     runs-on: ubuntu-latest
@@ -42,7 +42,7 @@ jobs:
       - name: Install pre-commit
         run: pip install pre-commit
       - name: Run linting tools
-        run: pre-commit run --all-files --hook-stage manual --hooks flake8,pylint
+        run: pre-commit run --all-files --hook flake8 --hook pylint
 
   pytest:
     runs-on: ubuntu-latest
