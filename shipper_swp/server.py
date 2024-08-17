@@ -1,10 +1,9 @@
-import numpy as np
-import plotly.graph_objects as go
 import http.server
 import socketserver
-from flask import Flask, request, jsonify, render_template, abort
-import plotly.graph_objects as go
+
 import numpy as np
+import plotly.graph_objects as go
+from flask import Flask, abort, jsonify, render_template, request
 
 app = Flask(__name__)
 
@@ -26,11 +25,24 @@ class Box:
             Box(self.id, self.breadth, self.length, self.height, self.weight, self.box_id),
             Box(self.id, self.breadth, self.height, self.length, self.weight, self.box_id),
             Box(self.id, self.height, self.length, self.breadth, self.weight, self.box_id),
-            Box(self.id, self.height, self.breadth, self.length, self.weight, self.box_id)
+            Box(self.id, self.height, self.breadth, self.length, self.weight, self.box_id),
         ]
 
+
 class Truck:
-    def __init__(self, id, model_name, length, breadth, height, tare_weight, gvwr, axle_weight_ratings, axle_group_weight_ratings, wheel_load_capacity):
+    def __init__(
+        self,
+        id,
+        model_name,
+        length,
+        breadth,
+        height,
+        tare_weight,
+        gvwr,
+        axle_weight_ratings,
+        axle_group_weight_ratings,
+        wheel_load_capacity,
+    ):
         self.id = id
         self.model_name = model_name
         self.length = length
@@ -55,7 +67,7 @@ class Truck:
         for i in range(box.length):
             for j in range(box.breadth):
                 for k in range(box.height):
-                    if self.space[x+i, y+j, z+k]:
+                    if self.space[x + i, y + j, z + k]:
                         return False
         return True
 
@@ -63,8 +75,10 @@ class Truck:
         for i in range(box.length):
             for j in range(box.breadth):
                 for k in range(box.height):
-                    self.space[x+i, y+j, z+k] = True
-                    self.weight_distribution[x+i, y+j, z+k] += box.weight / (box.length * box.breadth * box.height)
+                    self.space[x + i, y + j, z + k] = True
+                    self.weight_distribution[x + i, y + j, z + k] += box.weight / (
+                        box.length * box.breadth * box.height
+                    )
         self.occupied.append((box, x, y, z))
         self.current_weight += box.weight
         self.update_center_of_gravity(box, x, y, z)
@@ -74,8 +88,10 @@ class Truck:
         for i in range(box.length):
             for j in range(box.breadth):
                 for k in range(box.height):
-                    self.space[x+i, y+j, z+k] = False
-                    self.weight_distribution[x+i, y+j, z+k] -= box.weight / (box.length * box.breadth * box.height)
+                    self.space[x + i, y + j, z + k] = False
+                    self.weight_distribution[x + i, y + j, z + k] -= box.weight / (
+                        box.length * box.breadth * box.height
+                    )
         self.occupied.remove((box, x, y, z))
         self.current_weight -= box.weight
         self.update_center_of_gravity_after_removal(box, x, y, z)
@@ -83,9 +99,15 @@ class Truck:
 
     def update_center_of_gravity(self, box, x, y, z):
         total_mass = self.current_weight + self.tare_weight
-        new_cog_x = (self.center_of_gravity[0] * (total_mass - box.weight) + (x + box.length / 2) * box.weight) / total_mass
-        new_cog_y = (self.center_of_gravity[1] * (total_mass - box.weight) + (y + box.breadth / 2) * box.weight) / total_mass
-        new_cog_z = (self.center_of_gravity[2] * (total_mass - box.weight) + (z + box.height / 2) * box.weight) / total_mass
+        new_cog_x = (
+            self.center_of_gravity[0] * (total_mass - box.weight) + (x + box.length / 2) * box.weight
+        ) / total_mass
+        new_cog_y = (
+            self.center_of_gravity[1] * (total_mass - box.weight) + (y + box.breadth / 2) * box.weight
+        ) / total_mass
+        new_cog_z = (
+            self.center_of_gravity[2] * (total_mass - box.weight) + (z + box.height / 2) * box.weight
+        ) / total_mass
         self.center_of_gravity = [new_cog_x, new_cog_y, new_cog_z]
 
     def update_center_of_gravity_after_removal(self, box, x, y, z):
@@ -93,9 +115,15 @@ class Truck:
         if total_mass == 0:
             self.center_of_gravity = [self.length / 2, self.breadth / 2, self.height / 2]
         else:
-            new_cog_x = (self.center_of_gravity[0] * (total_mass + box.weight) - (x + box.length / 2) * box.weight) / total_mass
-            new_cog_y = (self.center_of_gravity[1] * (total_mass + box.weight) - (y + box.breadth / 2) * box.weight) / total_mass
-            new_cog_z = (self.center_of_gravity[2] * (total_mass + box.weight) - (z + box.height / 2) * box.weight) / total_mass
+            new_cog_x = (
+                self.center_of_gravity[0] * (total_mass + box.weight) - (x + box.length / 2) * box.weight
+            ) / total_mass
+            new_cog_y = (
+                self.center_of_gravity[1] * (total_mass + box.weight) - (y + box.breadth / 2) * box.weight
+            ) / total_mass
+            new_cog_z = (
+                self.center_of_gravity[2] * (total_mass + box.weight) - (z + box.height / 2) * box.weight
+            ) / total_mass
             self.center_of_gravity = [new_cog_x, new_cog_y, new_cog_z]
 
     def update_axle_loads(self, box, x):
@@ -112,10 +140,11 @@ class Truck:
                 return False
         return True
 
+
 def find_best_position(truck, box):
     best_position = None
-    best_volume_left = float('inf')
-    
+    best_volume_left = float("inf")
+
     for z in range(truck.height - box.height + 1):
         for y in range(truck.breadth - box.breadth + 1):
             for x in range(truck.length - box.length + 1):
@@ -126,6 +155,7 @@ def find_best_position(truck, box):
                         best_position = (x, y, z)
     return best_position
 
+
 def calculate_volume_left(box, x, y, z, truck):
     volume_left = 0
     for i in range(x, min(x + box.length, truck.length)):
@@ -135,13 +165,14 @@ def calculate_volume_left(box, x, y, z, truck):
                     volume_left += 1
     return volume_left
 
+
 def pack_truck(truck, boxes):
     boxes.sort(key=lambda box: box.volume, reverse=True)
     for box in boxes:
         best_position = None
         best_box = None
-        best_volume_left = float('inf')
-        
+        best_volume_left = float("inf")
+
         for rotation in box.get_rotations():
             position = find_best_position(truck, rotation)
             if position:
@@ -151,7 +182,7 @@ def pack_truck(truck, boxes):
                     best_volume_left = volume_left
                     best_position = (x, y, z)
                     best_box = rotation
-        
+
         if best_box and best_position:
             x, y, z = best_position
             truck.place_box(best_box, x, y, z)
@@ -162,8 +193,8 @@ def pack_truck(truck, boxes):
 def plotly_draw_boxes(truck, occupied_boxes):
     fig = go.Figure()
 
-    axle_colors = ['blue', 'green', 'red', 'cyan']
-    
+    axle_colors = ["blue", "green", "red", "cyan"]
+
     # Plot boxes and their edges
     for idx, (box, x, y, z) in enumerate(occupied_boxes):
         axle_index = int(x / (truck.length / len(truck.axle_weight_ratings)))
@@ -171,20 +202,13 @@ def plotly_draw_boxes(truck, occupied_boxes):
 
         # Define vertices for the box
         vertices = {
-            'x': [x, x + box.length, x + box.length, x, x, x + box.length, x + box.length, x],
-            'y': [y, y, y + box.breadth, y + box.breadth, y, y, y + box.breadth, y + box.breadth],
-            'z': [z, z, z, z, z + box.height, z + box.height, z + box.height, z + box.height]
+            "x": [x, x + box.length, x + box.length, x, x, x + box.length, x + box.length, x],
+            "y": [y, y, y + box.breadth, y + box.breadth, y, y, y + box.breadth, y + box.breadth],
+            "z": [z, z, z, z, z + box.height, z + box.height, z + box.height, z + box.height],
         }
-        
-        faces = [
-            [0, 1, 5, 4],
-            [1, 2, 6, 5],
-            [2, 3, 7, 6],
-            [3, 0, 4, 7],
-            [0, 1, 2, 3],
-            [4, 5, 6, 7]
-        ]
-        
+
+        faces = [[0, 1, 5, 4], [1, 2, 6, 5], [2, 3, 7, 6], [3, 0, 4, 7], [0, 1, 2, 3], [4, 5, 6, 7]]
+
         i, j, k = [], [], []
         for face in faces:
             i.append(face[0])
@@ -195,116 +219,116 @@ def plotly_draw_boxes(truck, occupied_boxes):
             k.append(face[3])
 
         # Add the mesh for the box
-        fig.add_trace(go.Mesh3d(
-            x=vertices['x'],
-            y=vertices['y'],
-            z=vertices['z'],
-            i=i,
-            j=j,
-            k=k,
-            opacity=0.5,
-            color=color,
-            name=box.box_id
-        ))
+        fig.add_trace(
+            go.Mesh3d(
+                x=vertices["x"],
+                y=vertices["y"],
+                z=vertices["z"],
+                i=i,
+                j=j,
+                k=k,
+                opacity=0.5,
+                color=color,
+                name=box.box_id,
+            )
+        )
 
         # Add edges for the box
-        edges_x = [vertices['x'][i] for i in [0, 1, 2, 3, 0, 4, 5, 6, 7, 4, 5, 1, 2, 6, 7, 3]]
-        edges_y = [vertices['y'][i] for i in [0, 1, 2, 3, 0, 4, 5, 6, 7, 4, 5, 1, 2, 6, 7, 3]]
-        edges_z = [vertices['z'][i] for i in [0, 1, 2, 3, 0, 4, 5, 6, 7, 4, 5, 1, 2, 6, 7, 3]]
-        
-        fig.add_trace(go.Scatter3d(
-            x=edges_x,
-            y=edges_y,
-            z=edges_z,
-            mode='lines',
-            line=dict(color='black', width=2),
-            name=f'Box {box.box_id} edges'
-        ))
+        edges_x = [vertices["x"][i] for i in [0, 1, 2, 3, 0, 4, 5, 6, 7, 4, 5, 1, 2, 6, 7, 3]]
+        edges_y = [vertices["y"][i] for i in [0, 1, 2, 3, 0, 4, 5, 6, 7, 4, 5, 1, 2, 6, 7, 3]]
+        edges_z = [vertices["z"][i] for i in [0, 1, 2, 3, 0, 4, 5, 6, 7, 4, 5, 1, 2, 6, 7, 3]]
+
+        fig.add_trace(
+            go.Scatter3d(
+                x=edges_x,
+                y=edges_y,
+                z=edges_z,
+                mode="lines",
+                line=dict(color="black", width=2),
+                name=f"Box {box.box_id} edges",
+            )
+        )
 
     # Plot axles
     for i, position in enumerate(np.linspace(0, truck.length, len(truck.axle_weight_ratings))):
-        fig.add_trace(go.Scatter3d(
-            x=[position, position],
-            y=[0, truck.breadth],
-            z=[0, 0],
-            mode='lines+text',
-            line=dict(color='black', width=4),
-            text=[f'Axle {i+1}', f'Load: {truck.axle_loads[i]:.2f} kg'],
-            textposition='top right',
-            name=f'Axle {i+1}'
-        ))
+        fig.add_trace(
+            go.Scatter3d(
+                x=[position, position],
+                y=[0, truck.breadth],
+                z=[0, 0],
+                mode="lines+text",
+                line=dict(color="black", width=4),
+                text=[f"Axle {i+1}", f"Load: {truck.axle_loads[i]:.2f} kg"],
+                textposition="top right",
+                name=f"Axle {i+1}",
+            )
+        )
 
     # Add scatter plot for box IDs
     ids_x = [x + box.length / 2 for box, x, y, z in occupied_boxes]
     ids_y = [y + box.breadth / 2 for box, x, y, z in occupied_boxes]
     ids_z = [z + box.height / 2 for box, x, y, z in occupied_boxes]
     ids_text = [box.box_id for box, x, y, z in occupied_boxes]
-    
-    fig.add_trace(go.Scatter3d(
-        x=ids_x,
-        y=ids_y,
-        z=ids_z,
-        mode='text',
-        text=ids_text,
-        textposition='middle center',
-        marker=dict(size=5, color='black'),
-        name='Box IDs'
-    ))
+
+    fig.add_trace(
+        go.Scatter3d(
+            x=ids_x,
+            y=ids_y,
+            z=ids_z,
+            mode="text",
+            text=ids_text,
+            textposition="middle center",
+            marker=dict(size=5, color="black"),
+            name="Box IDs",
+        )
+    )
 
     # Calculate and annotate center of gravity and total weight
     cog_x, cog_y, cog_z = truck.center_of_gravity
     total_weight = truck.current_weight + truck.tare_weight
 
     # Add center of mass trace
-    fig.add_trace(go.Scatter3d(
-        x=[cog_x],
-        y=[cog_y],
-        z=[cog_z],
-        mode='markers+text',
-        marker=dict(size=10, color='red'),
-        text=['Center of Gravity'],
-        textposition='top center',
-        name='Center of Gravity'
-    ))
+    fig.add_trace(
+        go.Scatter3d(
+            x=[cog_x],
+            y=[cog_y],
+            z=[cog_z],
+            mode="markers+text",
+            marker=dict(size=10, color="red"),
+            text=["Center of Gravity"],
+            textposition="top center",
+            name="Center of Gravity",
+        )
+    )
 
     # Add total weight annotation as text
-    fig.add_trace(go.Scatter3d(
-        x=[truck.length / 2],
-        y=[truck.breadth / 2],
-        z=[-truck.height * 0.1],  # Position this annotation below the plot
-        mode='text',
-        text=[f"Total Weight: {total_weight:.2f} kg"],
-        textposition='bottom center',
-        name='Total Weight'
-    ))
+    fig.add_trace(
+        go.Scatter3d(
+            x=[truck.length / 2],
+            y=[truck.breadth / 2],
+            z=[-truck.height * 0.1],  # Position this annotation below the plot
+            mode="text",
+            text=[f"Total Weight: {total_weight:.2f} kg"],
+            textposition="bottom center",
+            name="Total Weight",
+        )
+    )
 
     fig.update_layout(
         scene=dict(
-            xaxis_title='X',
-            yaxis_title='Y',
-            zaxis_title='Z',
-            xaxis=dict(
-                nticks=10,
-                range=[0, truck.length],
-                title='Length'
-            ),
-            yaxis=dict(
-                nticks=10,
-                range=[0, truck.breadth],
-                title='Breadth'
-            ),
-            zaxis=dict(
-                nticks=10,
-                range=[0, truck.height],
-                title='Height'
-            ),
+            xaxis_title="X",
+            yaxis_title="Y",
+            zaxis_title="Z",
+            xaxis=dict(nticks=10, range=[0, truck.length], title="Length"),
+            yaxis=dict(nticks=10, range=[0, truck.breadth], title="Breadth"),
+            zaxis=dict(nticks=10, range=[0, truck.height], title="Height"),
             aspectratio=dict(
                 x=truck.length / max(truck.breadth, truck.height),
                 y=truck.breadth / max(truck.length, truck.height),
-                z=truck.height / max(truck.length, truck.breadth)
-            )
+                z=truck.height / max(truck.length, truck.breadth),
+            ),
         ),
-        title='3D Visualization of Packed Boxes'
+        title="3D Visualization of Packed Boxes",
     )
 
     fig.update_layout(
@@ -314,40 +338,32 @@ def plotly_draw_boxes(truck, occupied_boxes):
                 x=1.15,
                 y=0.8,
                 buttons=[
-                    dict(
-                        label="Highlight",
-                        method="update",
-                        args=[{"showlegend": True}]
-                    ),
-                    dict(
-                        label="Reset",
-                        method="update",
-                        args=[{"showlegend": True}]
-                    )
-                ]
+                    dict(label="Highlight", method="update", args=[{"showlegend": True}]),
+                    dict(label="Reset", method="update", args=[{"showlegend": True}]),
+                ],
             )
         ]
     )
-    
+
     fig.write_html(f"shipper_swp/templates/truck_visualization_{truck.id}.html")
 
 
-@app.route('/process/', methods=['POST'])
+@app.route("/process/", methods=["POST"])
 def process():
     data = request.get_json()
     print(data)
     boxes = []
 
     # Iterate over each box_data in the data['boxes'] list
-    for box_data in data['boxes']:
+    for box_data in data["boxes"]:
         # Extract the stock number and remove it from box_data
-        stock = box_data.pop('stock')
-        
+        stock = box_data.pop("stock")
+
         # Create multiple instances of Box according to the stock number
         for _ in range(int(stock / 2)):
             boxes.append(Box(**box_data))
 
-    truck = Truck(**data['truck'])
+    truck = Truck(**data["truck"])
     for box in boxes:
         best_position = find_best_position(truck, box)
         if best_position:
@@ -363,28 +379,27 @@ def process():
         box_ids.append(box.box_id)
 
     # Create the response message
-    response_message = {'message': 'Boxes packed and visualization generated', 'box_ids': box_ids}
+    response_message = {"message": "Boxes packed and visualization generated", "box_ids": box_ids}
 
     # Return the response as JSON
     return jsonify(response_message)
 
-@app.route('/visualization/<string:truck_id>/', methods=['GET'])
+
+@app.route("/visualization/<string:truck_id>/", methods=["GET"])
 def visualization(truck_id):
     # Construct the template name based on the truck_id
-    template_name = f'truck_visualization_{truck_id}.html'
+    template_name = f"truck_visualization_{truck_id}.html"
 
     try:
         # Attempt to render the requested template
         return render_template(template_name)
     except Exception:
         # Render a warning page if the specific template does not exist
-        return render_template('warning.html', message="The visualization does not exist or the URL might be incorrect"), 404
+        return (
+            render_template("warning.html", message="The visualization does not exist or the URL might be incorrect"),
+            404,
+        )
 
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8081)
-
-
-
-
-
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8081)

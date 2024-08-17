@@ -2,5 +2,5 @@ from django.apps import AppConfig
 
 
 class ApiShipperConfig(AppConfig):
-    default_auto_field = 'django.db.models.BigAutoField'
-    name = 'api_shipper'
+    default_auto_field = "django.db.models.BigAutoField"
+    name = "api_shipper"

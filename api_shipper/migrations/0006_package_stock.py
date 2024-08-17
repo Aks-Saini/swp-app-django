@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('api_shipper', '0005_alter_package_allocation'),
+        ("api_shipper", "0005_alter_package_allocation"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='package',
-            name='stock',
+            model_name="package",
+            name="stock",
             field=models.IntegerField(default=2),
             preserve_default=False,
         ),
