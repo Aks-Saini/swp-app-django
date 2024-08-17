@@ -1,0 +1,21 @@
+name: Code Quality and Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  formatting:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install pre-commit
+        run: pip install pre-commit
+      - name: Run formatting tools
+        run: |
+          pre-commit run black --all-files
+          pre-commit run isort --all-files
