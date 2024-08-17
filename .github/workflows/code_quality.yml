@@ -64,4 +64,4 @@ jobs:
       run: docker-compose -f local.yml up --build -d
 
     - name: Run pytest inside Docker
-      run: docker-compose -f local.yml exec web pytest
+      run: docker-compose -f local.yml exec -T web pytest
