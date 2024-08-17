@@ -18,4 +18,3 @@ pi:
 
 ri:
 	docker-compose -f local.yml run web python manage.py reset_inventory
-

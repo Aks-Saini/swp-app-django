@@ -93,7 +93,7 @@ docker-compose -f local.yml build --no-cache
 ## RUN
 docker-compose -f local.yml up
 
-## migrations 
+## migrations
 docker-compose -f local.yml run web python manage.py makemigrations
 docker-compose -f local.yml run web python manage.py migrate
 
@@ -114,7 +114,7 @@ Create a Package: POST /api/packages/
 Update a Package: PUT /api/packages/{id}/ or PATCH /packages/{id}/
 Delete a Package: DELETE /api/packages/{id}/
 
-## Truck Viewset 
+## Truck Viewset
 List Trucks: GET /api/trucks-boarding/
 Retrieve a Truck: GET /api/trucks-boarding/{id}/
 Create a Truck: POST /api/trucks-boarding/

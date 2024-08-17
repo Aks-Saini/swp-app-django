@@ -241,7 +241,7 @@ const VehicleForm = (props) => {
     }
   };
 
-  
+
 
   return (
     <form
@@ -250,11 +250,11 @@ const VehicleForm = (props) => {
     >
       <div style={{ height: "80%", overflowY: "scroll" }}>
         <Divider sx={{ margin: "15px 15px 0 0", padding: "10px" }}>
-          Approval Status 
+          Approval Status
         </Divider>
         {getApprovalIcon(approvalStatus)}
-        <Typography 
-                variant="h6" 
+        <Typography
+                variant="h6"
                 sx={{ flexGrow: 1 }}
             >
                 {approvalStatus}

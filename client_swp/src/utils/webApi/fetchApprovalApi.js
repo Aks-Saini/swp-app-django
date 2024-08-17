@@ -20,5 +20,3 @@ const fetchApprovalApi = {
 };
 
 export default fetchApprovalApi;
-
-
